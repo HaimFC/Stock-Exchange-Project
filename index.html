@@ -1,17 +1,32 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style.css">
-    <script src="scripts.js" defer></script>
-    <title>Stock Exchange Project</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Search Companies</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-    <div class="main-page" id="mainPage">
-        <input type="text" class="search-bar" id="searchBar">
-        <button class="search-button" id="searchButton">Search</button>
-        <ul class="stocks-list" id="stocksList"></ul>        
-    </div>
+  <div class="container">
+    <h1>Search Companies</h1>
+
+    <!-- Marquee -->
+    <div id="marquee-container"></div>
+
+    <!-- ✅ FIXED Compare Bar -->
+    <div id="compare-bar"></div>
+
+    <!-- Search -->
+    <div id="search-container"></div>
+
+    <!-- Results -->
+    <div id="results-container"></div>
+  </div>
+
+  <!-- External Libraries -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+
+  <!-- Project Modules -->
+  <script type="module" src="scripts.js"></script>
 </body>
 </html>

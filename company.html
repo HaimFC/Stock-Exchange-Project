@@ -1,12 +1,37 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="scripts.js" defer></script>
-    <title>Company</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Company Info</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-    <div class="main-company-page" id="mainCompanyPage"></div>
+
+  <!-- Comparison List UI -->
+  <div id="compareListContainer"></div>
+
+  <!-- Main Company Info Section -->
+  <div id="compInfo"></div>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+  <script src="CompareListManager.js"></script>
+  <script src="CompanyInfo.js"></script>
+  <script>
+    (async function () {
+      const compareList = new CompareListManager(document.getElementById("compareListContainer"));
+      compareList.render();
+
+      const params = new URLSearchParams(location.search);
+      const symbol = params.get("symbol");
+
+      if (symbol) {
+        const compInfo = new CompanyInfo(document.getElementById("compInfo"), symbol);
+        await compInfo.load();
+        await compInfo.addChart();
+      }
+    })();
+  </script>
 </body>
 </html>
