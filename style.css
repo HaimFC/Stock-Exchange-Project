@@ -1,0 +1,24 @@
+body{
+    margin: 0;
+    display: inline;
+}
+
+.main-page{
+    width: 70%;
+}
+.search-bar{
+    width:90%;
+}
+.search-button{
+    width: calc(10% - 12px);
+}
+.stocks-list{
+    list-style: none;
+    padding: 0px;
+}
+
+.stock{
+    margin-bottom: 10px;
+    border-bottom: 1px rgb(163, 158, 158) solid;
+
+}
