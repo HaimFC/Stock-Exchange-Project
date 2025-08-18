@@ -58,5 +58,5 @@ Stock-Exchange-Project/
 
 ## 🧠 Author
 
-Made with 💻 by Haim Fellner Cohen  
+Made by Haim Fellner Cohen  
 ---
