@@ -17,6 +17,7 @@ class CompanyInfo {
       await this.fetchProfile();
       await this.fetchHistoricalPrices();
       this.render();
+      await this.addChart(); 
     } catch (err) {
       console.error("Load error:", err);
       this.container.innerHTML = "<p class='error'>Failed to load company data.</p>";
@@ -36,53 +37,68 @@ class CompanyInfo {
     const res = await fetch(url);
     if (!res.ok) throw new Error("Error fetching historical prices");
     const data = await res.json();
-    this.historical = data.historical;
+    this.historical = Array.isArray(data.historical) ? data.historical : [];
   }
 
   render() {
-    const profile = this.profile;
-    const container = document.createElement("div");
-    container.classList.add("company-profile");
+    const p = this.profile || {};
+    const wrap = document.createElement("div");
+    wrap.classList.add("company-profile", "card");
+
+    const header = document.createElement("div");
+    header.className = "company-header";
 
     const img = document.createElement("img");
-    img.src = profile.image;
+    img.src = p.image || "";
     img.alt = "Company Logo";
-    img.width = 100;
+    img.width = 72;
+    img.height = 72;
+    img.onerror = () => (img.style.display = "none");
+
+    const titleWrap = document.createElement("div");
+    titleWrap.className = "company-title";
 
     const name = document.createElement("h1");
-    name.textContent = profile.companyName;
+    name.textContent = p.companyName || p.symbol || "Company";
+
+    const stock = document.createElement("div");
+    stock.className = "price-row";
+    const priceText = `Price: $${Number(p.price ?? 0).toFixed(2)}`;
+    let change = "";
+    if (typeof p.changesPercentage === "number") change = `${p.changesPercentage.toFixed(2)}%`;
+    else if (typeof p.changesPercentage === "string") change = p.changesPercentage;
+    stock.innerHTML = `<span>${priceText}</span>${
+      change ? `<span class="chip ${String(change).startsWith("-") ? "down" : "up"}">${change}</span>` : ""
+    }`;
+
+    titleWrap.append(name, stock);
+    header.append(img, titleWrap);
 
     const desc = document.createElement("p");
-    desc.textContent = profile.description;
+    desc.textContent = p.description || "";
 
     const link = document.createElement("a");
-    link.href = profile.website;
+    link.href = p.website || "#";
     link.textContent = "Visit Website";
     link.target = "_blank";
-
-    const stock = document.createElement("h2");
-    stock.textContent = `Stock Price: $${profile.price}`;
-
-    const change = document.createElement("span");
-    if (typeof profile.changesPercentage === "string") {
-      change.textContent = ` (${profile.changesPercentage})`;
-      change.style.color = profile.changesPercentage.includes("+") ? "lightgreen" : "red";
-    } else {
-      change.textContent = " (No change data)";
-      change.style.color = "gray";
-    }
+    link.className = "ghost-btn";
 
     const chart = document.createElement("canvas");
     chart.id = "chart";
 
-    container.append(img, name, desc, link, stock, change, chart);
-    this.container.appendChild(container);
+    wrap.innerHTML = "";
+    wrap.append(header, desc, link, chart);
+    this.container.innerHTML = "";
+    this.container.appendChild(wrap);
   }
 
   async addChart() {
-    const ctx = document.getElementById("chart").getContext("2d");
-    const labels = this.historical.map(point => point.date).reverse();
-    const prices = this.historical.map(point => point.close).reverse();
+    const canvas = document.getElementById("chart");
+    if (!canvas || !this.historical.length) return;
+
+    const ctx = canvas.getContext("2d");
+    const labels = this.historical.map(pt => pt.date).reverse();
+    const prices = this.historical.map(pt => pt.close).reverse();
 
     new Chart(ctx, {
       type: "line",
@@ -94,12 +110,15 @@ class CompanyInfo {
           fill: false,
           borderColor: "rgb(75, 192, 192)",
           tension: 0.1,
+          pointRadius: 0
         }]
       },
       options: {
         responsive: true,
+        maintainAspectRatio: false,
+        legend: { display: true },
         scales: {
-          xAxes: [{ display: true }],
+          xAxes: [{ display: true, ticks: { maxRotation: 0, autoSkip: true, maxTicksLimit: 8 } }],
           yAxes: [{ display: true }]
         }
       }

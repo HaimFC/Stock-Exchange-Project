@@ -14,11 +14,10 @@ marquee.loadAndRender();
 const compareManager = new CompareListManager(compareBarContainer);
 
 const results = new SearchResults(resultsContainer);
-results.setCompareCallback(profile => {
-  compareManager.addCompany(profile);
-});
+results.setCompareCallback(profile => compareManager.addCompany(profile));
 
-const searchForm = new SearchForm(searchContainer);
+const searchForm = new SearchForm(searchContainer, {
+  onCompare: (profile) => compareManager.addCompany(profile),
+});
+searchForm.setResults(results);
 searchForm.render();
-searchForm.resultsContainer = resultsContainer;
-searchForm.results = results;
